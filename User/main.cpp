@@ -81,82 +81,81 @@ void LED8::_update(void)
 
 int main(void)
 {
-	LED8 led1_8;
+	LED8 led1_8;			//创建8位LED对象
 	
-	char inputstr[1000]{0};
+	char inputstr[1000]{0};		//输入缓冲区
 
 	while(1)
 	{
 		std::cout << "->" ;
-		std::cin >> inputstr;
-		if(strcmp(inputstr, "1") == 0)
+		std::cin >> inputstr;	//获取输入信息
+		int len = strlen(inputstr);
+		int i = 0;
+		for(i = 0; i < len; i++)
 		{
-			led1_8.putLED(1);
-		}
-		else if(strcmp(inputstr, "2") == 0)
-		{
-			led1_8.putLED(2);
-		}
-		else if(strcmp(inputstr, "3") == 0)
-		{
-			led1_8.putLED(4);
-		}
-		else if(strcmp(inputstr, "4") == 0)
-		{
-			led1_8.putLED(8);
-		}
-		else if(strcmp(inputstr, "5") == 0)
-		{
-			led1_8.putLED(16);
-		}
-		else if(strcmp(inputstr, "6") == 0)
-		{
-			led1_8.putLED(32);
-		}
-		else if(strcmp(inputstr, "7") == 0)
-		{
-			led1_8.putLED(64);
-		}
-		else if(strcmp(inputstr, "8") == 0)
-		{
-			led1_8.putLED(128);
-		}
-		else if(strcmp(inputstr, "0") == 0)
-		{
-			led1_8.putLED(0);
-		}
-		else if(strcmp(inputstr, "clean") == 0)
-		{
-			led1_8.putLED(0x00);
-		}
-		else if(strcmp(inputstr, "all") == 0)
-		{
-			led1_8.putLED(0xFF);
-		}
-		else  if(strcmp(inputstr, "waterlamp") == 0)
-		{
-			led1_8.putLED(0x00);
-			delay(100);
-			for(int8_t i{0}; i < 8; i++)
+			if(!isdigit(inputstr[i]))
 			{
-				led1_8.putLED((uint8_t)pow(2, i));
-				delay(100);
+				break;
 			}
-			for(int8_t i{7}; i >= 0; i--)
+		}
+		if(i >= len)	//是纯数字
+		{
+			int data = atoi(inputstr);
+			if((data > 255) || (data < 0))	//超出8位，报错
 			{
-				led1_8.putLED((uint8_t)pow(2, i));
-				delay(100);
+				std::cout << "Input error!" << std::endl;
 			}
-			led1_8.putLED(0x00);
+			else
+			{
+				led1_8.putLED((uint8_t)atoi(inputstr));
+			}
 		}
-		else if(strcmp(inputstr, "exit") == 0)
+		else		//是其他字符串
 		{
-			led1_8.putLED(0);
-			return 0;
-		}
-		else
-		{
-			std::cout << "Input Error!" << std::endl;
+			if(strcmp(inputstr, "clean") == 0)
+			{
+				led1_8.putLED(0x00);
+			}
+			else if(strcmp(inputstr, "all") == 0)
+			{
+				led1_8.putLED(0xFF);
+			}
+			else  if(strcmp(inputstr, "water") == 0)
+			{
+				led1_8.putLED(0x00);
+				delay(100);
+				for(int8_t i{0}; i < 8; i++)
+				{
+					led1_8.putLED((uint8_t)pow(2, i));
+					delay(100);
+				}
+				for(int8_t i{7}; i >= 0; i--)
+				{
+					led1_8.putLED((uint8_t)pow(2, i));
+					delay(100);
+				}
+				led1_8.putLED(0x00);
+			}
+			else if(strcmp(inputstr, "help") == 0)
+			{
+				std::cout \
+					<<"输入一个小于256大于等于0的数字，以显示到8位LED。\n" \
+					<<"输入help，获取帮助信息。\n" \
+					<<"输入all，以点亮所有LED。\n" \
+					<<"输入clean，以熄灭所有LED。\n" \
+					<<"输入water，以显示一次流水灯。\n" \
+					<<"输入exit，退出。" \
+					<<std::endl;
+			}
+			else if(strcmp(inputstr, "exit") == 0)
+			{
+				led1_8.putLED(0);
+				return 0;
+			}
+			else
+			{
+				std::cout << "Input error!" << std::endl;
+			}
 		}
 	}
 
